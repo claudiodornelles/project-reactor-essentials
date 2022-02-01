@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation([
+            "io.projectreactor:reactor-core:3.4.14",
+            "org.slf4j:slf4j-api:1.7.35",
+            "org.slf4j:slf4j-log4j12:1.7.35",
+            "org.projectlombok:lombok:1.18.22"
+    ])
+    testImplementation([
+            "io.projectreactor:reactor-test:3.4.14",
+            "org.junit.jupiter:junit-jupiter-api:5.8.2"
+    ])
+    testRuntimeOnly ([
+            "org.junit.jupiter:junit-jupiter-engine:5.8.2"
+    ])
+}
+
+test {
+    useJUnitPlatform()
+}
