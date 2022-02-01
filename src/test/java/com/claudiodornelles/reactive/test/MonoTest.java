@@ -91,10 +91,27 @@ class MonoTest {
                 () -> log.info("Stream complete"),
                 Subscription::cancel
         );
+    }
 
-        StepVerifier.create(mono)
-                .expectNext(name.toUpperCase())
-                .verifyComplete();
+    @Test
+    void monoDoOnMethods() {
+        String name = "Claudio Dornelles";
+        Mono<Object> mono = Mono.just(name)
+                .log()
+                .map(String::toUpperCase)
+                .doOnSubscribe(subscription -> log.info("Subscribed"))
+                .doOnRequest(longNumber -> log.info("Request Received"))
+                .doOnNext(element -> log.info("Sending New Element: {}", element))
+                .doOnSuccess(element -> log.info("Successfully Sent: {}", element))
+                .flatMap(element -> Mono.empty())
+                .doOnNext(element -> log.info("Sending New Element: {}", element))
+                .doOnSuccess(element -> log.info("Successfully Sent: {}", element));
+
+        mono.subscribe(
+                string -> log.info("Received New Element: {}", string),
+                error -> log.error("Somenthing Went Wrong", error),
+                () -> log.info("Stream Complete")
+        );
     }
 }
 
