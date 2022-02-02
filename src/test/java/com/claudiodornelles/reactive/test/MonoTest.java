@@ -113,5 +113,33 @@ class MonoTest {
                 () -> log.info("Stream Complete")
         );
     }
+
+    @Test
+    void monoDoOnError() {
+        String message = "... this is a message sent by onErrorResume() with a new Mono.just()";
+        Mono<Object> mono = Mono.error(new IllegalArgumentException("Illegal argument exception error"))
+                .doOnError(e -> log.error("Error: {}", e.getMessage()))
+                .onErrorResume(error -> {
+                    log.info("Executing onErrorResume(), this was the error message: {}", error.getMessage());
+                    return Mono.just(message);
+                })
+                .log();
+
+        StepVerifier.create(mono)
+                .expectNext(message)
+                .verifyComplete();
+    }
+
+    @Test
+    void monoOnErrorReturn() {
+        String message = "Executing onErrorReturn: Something bad happened";
+        Mono<Object> mono = Mono.error(new IllegalArgumentException("Illegal argument exception error"))
+                .onErrorReturn(message)
+                .log();
+
+        StepVerifier.create(mono)
+                .expectNext(message)
+                .verifyComplete();
+    }
 }
 
